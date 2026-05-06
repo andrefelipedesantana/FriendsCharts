@@ -1,65 +1,112 @@
-import Image from "next/image";
+type Track = {
+  name: string;
+  playcount: number;
+};
 
-export default function Home() {
+type Album = {
+  name: string;
+  playcount: number;
+};
+
+type User = {
+  user: string;
+  playcount: number;
+};
+
+type Artist = {
+  name: string;
+  playcount: number;
+}
+
+type TracksResponse = {
+  tracks: Track[];
+  users: User[];
+};
+
+type AlbumsResponse = {
+  albums: Album[];
+};
+
+type ArtistsResponse = {
+  artists: Artist[];
+}
+
+async function getTopTracks(): Promise<TracksResponse> {
+  const res = await fetch('http://localhost:3000/api/top-tracks');
+
+  if (!res.ok) {
+    throw new Error('Erro ao buscar tracks');
+  }
+
+  return res.json();
+}
+
+async function getTopAlbums(): Promise<AlbumsResponse> {
+  const res = await fetch('http://localhost:3000/api/top-albums');
+
+  if (!res.ok) {
+    throw new Error('Erro ao buscar albums');
+  }
+
+  return res.json();
+}
+
+async function getTopArtists(): Promise<ArtistsResponse>{
+  const res = await fetch('http://localhost:3000/api/top-artists');
+
+  if(!res.ok){
+    throw new Error('Erro ao buscar artistas');
+  }
+
+  return res.json();
+}
+
+export default async function Home() {
+  const [tracksData, albumsData, artistsData] = await Promise.all([
+    getTopTracks(),
+    getTopAlbums(),
+    getTopArtists(),
+  ]);
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+    <div>
+
+      <div>
+        <h1>Top Tracks</h1>
+        {tracksData?.tracks?.map((track) => (
+          <p key={track.name}>
+            {track.name} {track.playcount}
           </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+        ))}
+      </div>
+
+      <div>
+        <h1>Top Albums</h1>
+        {albumsData?.albums?.map((album) => (
+          <p key={album.name}>
+            {album.name} - {album.playcount}
+          </p>
+        ))}
+      </div>
+
+      <div>
+        <h1>Top Users</h1>
+        {tracksData?.users?.map((user) => (
+          <p key={user.user}>
+            {user.user} - {user.playcount}
+          </p>
+        ))}
+      </div>
+
+      <div>
+        <h1>Top Artists</h1>
+        {artistsData?.artists?.map((artist) => (
+          <p key={artist.name}>
+            {artist.name} - {artist.playcount}
+          </p> 
+        ))}
+      </div>
+
     </div>
   );
 }
