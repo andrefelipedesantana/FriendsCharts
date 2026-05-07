@@ -1,65 +1,6 @@
-type Track = {
-  name: string;
-  playcount: number;
-};
-
-type Album = {
-  name: string;
-  playcount: number;
-};
-
-type User = {
-  user: string;
-  playcount: number;
-};
-
-type Artist = {
-  name: string;
-  playcount: number;
-}
-
-type TracksResponse = {
-  tracks: Track[];
-  users: User[];
-};
-
-type AlbumsResponse = {
-  albums: Album[];
-};
-
-type ArtistsResponse = {
-  artists: Artist[];
-}
-
-async function getTopTracks(): Promise<TracksResponse> {
-  const res = await fetch('http://localhost:3000/api/top-tracks');
-
-  if (!res.ok) {
-    throw new Error('Erro ao buscar tracks');
-  }
-
-  return res.json();
-}
-
-async function getTopAlbums(): Promise<AlbumsResponse> {
-  const res = await fetch('http://localhost:3000/api/top-albums');
-
-  if (!res.ok) {
-    throw new Error('Erro ao buscar albums');
-  }
-
-  return res.json();
-}
-
-async function getTopArtists(): Promise<ArtistsResponse>{
-  const res = await fetch('http://localhost:3000/api/top-artists');
-
-  if(!res.ok){
-    throw new Error('Erro ao buscar artistas');
-  }
-
-  return res.json();
-}
+import { getTopAlbums } from "@/utils/api/albums";
+import { getTopArtists } from "@/utils/api/artists";
+import { getTopTracks } from "@/utils/api/tracks";
 
 export default async function Home() {
   const [tracksData, albumsData, artistsData] = await Promise.all([
