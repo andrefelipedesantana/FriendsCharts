@@ -1,33 +1,55 @@
 import { getTopArtists } from "@/services/top-artists.service";
 import { users } from "@/constants";
 
-export async function GET(){
+export const dynamic = 'force-dynamic';
 
-    try{
-        const rankingArtists: Record<string, number> = {};
+export async function GET() {
+
+    try {
+        const rankingArtists: Record<string, { playcount: number; topListener?: string; topListenerPlays?: number }> = {};
 
         const results = await Promise.all(
-            users.map(user => getTopArtists(user))
+            users.map(async (user) => ({
+                user,
+                artists: await getTopArtists(user)
+            }))
         );
 
-
-        for(const artists of results){
-            for(const artist of artists){
+        for (const result of results) {
+            const { user, artists } = result;
+            for (const artist of artists) {
                 const name = artist.name;
                 const plays = Number(artist.playcount) || 0;
 
-                rankingArtists[name] = (rankingArtists[name] || 0) + plays;
+                if (!rankingArtists[name]) {
+                    rankingArtists[name] = {
+                        playcount: 0,
+                        topListener: user,
+                        topListenerPlays: plays
+                    };
+                }
+
+                rankingArtists[name].playcount += plays;
+
+                if (plays > (rankingArtists[name].topListenerPlays || 0)) {
+                    rankingArtists[name].topListener = user;
+                    rankingArtists[name].topListenerPlays = plays;
+                }
             }
         }
 
         const sorted = Object.entries(rankingArtists)
-        .map(([name, playcount]) => ({name, playcount}))
-        .sort((a, b) => b.playcount - a.playcount);
+            .map(([name, data]) => ({ 
+                name, 
+                playcount: data.playcount,
+                topListener: data.topListener
+            }))
+            .sort((a, b) => b.playcount - a.playcount);
 
         return Response.json({
-            artists: sorted.slice(0, 5)
+            artists: sorted.slice(0, 10)
         })
-    } catch(error){
+    } catch (error) {
         console.log(error);
 
         return Response.json(
@@ -35,5 +57,5 @@ export async function GET(){
             { status: 500 }
         );
     }
-    
+
 }

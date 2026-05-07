@@ -1,11 +1,16 @@
 type Track = {
   name: string;
   playcount: number;
+  artist?: string;
+  topListener?: string;
 };
 
 type Album = {
   name: string;
   playcount: number;
+  artist?: string;
+  topListener?: string;
+  topListenerPlays?: number;
 };
 
 type User = {
@@ -23,6 +28,7 @@ type Artist = {
 export type TracksResponse = {
   tracks: Track[];
   users: User[];
+  totalPlays: number;
 };
 
 export type AlbumsResponse = {

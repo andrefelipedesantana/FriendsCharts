@@ -1,8 +1,9 @@
 import { ArtistsResponse } from "@/types/lastfm-types";
+import { getBaseUrl } from "@/constants";
 
 export async function getTopArtists(): Promise<ArtistsResponse> {
-  const res = await fetch("http://localhost:3000/api/top-artists", {
-    next: { revalidate: 21600 }
+  const res = await fetch(`${getBaseUrl()}/api/top-artists`, {
+    next: { revalidate: 0 }
   });
 
   if (!res.ok) {
