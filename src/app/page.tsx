@@ -9,6 +9,8 @@ import { ListenerRanking } from "@/components/ranking/top-listener-card";
 import { ExportButton } from "@/components/export-button";
 import { ExportView } from "@/components/export-view";
 
+export const dynamic = 'force-dynamic';
+
 export default async function Home() {
   const [tracksData, albumsData, artistsData] = await Promise.all([
     getAggregatedTracks(),
