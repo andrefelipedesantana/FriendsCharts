@@ -3,7 +3,7 @@ import { getBaseUrl } from "@/constants";
 
 export async function getTopTracks(): Promise<TracksResponse> {
   const res = await fetch(`${getBaseUrl()}/api/top-tracks`, {
-    next: { revalidate: 0 }
+    next: { revalidate: 600 }
   });
 
   if (!res.ok) {

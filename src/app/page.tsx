@@ -1,6 +1,6 @@
-import { getTopAlbums } from "@/utils/api/albums";
-import { getTopArtists } from "@/utils/api/artists";
-import { getTopTracks } from "@/utils/api/tracks";
+import { getAggregatedAlbums } from "@/lib/aggregators/albums";
+import { getAggregatedArtists } from "@/lib/aggregators/artists";
+import { getAggregatedTracks } from "@/lib/aggregators/tracks";
 
 import { TrackRanking } from "@/components/ranking/track-ranking";
 import { ArtistsRanking } from "@/components/ranking/artist-ranking";
@@ -11,9 +11,9 @@ import { ExportView } from "@/components/export-view";
 
 export default async function Home() {
   const [tracksData, albumsData, artistsData] = await Promise.all([
-    getTopTracks(),
-    getTopAlbums(),
-    getTopArtists(),
+    getAggregatedTracks(),
+    getAggregatedAlbums(),
+    getAggregatedArtists(),
   ]);
 
   const today = new Date();

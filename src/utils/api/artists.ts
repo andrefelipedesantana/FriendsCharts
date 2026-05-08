@@ -3,7 +3,7 @@ import { getBaseUrl } from "@/constants";
 
 export async function getTopArtists(): Promise<ArtistsResponse> {
   const res = await fetch(`${getBaseUrl()}/api/top-artists`, {
-    next: { revalidate: 0 }
+    next: { revalidate: 600 }
   });
 
   if (!res.ok) {
