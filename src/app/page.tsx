@@ -22,9 +22,13 @@ export default async function Home() {
   const lastWeek = new Date(today);
   lastWeek.setDate(today.getDate() - 7);
 
-  const options: Intl.DateTimeFormatOptions = { day: "2-digit", month: "short" };
-  const formattedToday = today.toLocaleDateString("en-US", options);
-  const formattedLastWeek = lastWeek.toLocaleDateString("en-US", options);
+  const options: Intl.DateTimeFormatOptions = {
+    day: "2-digit",
+    month: "short",
+    timeZone: "America/Sao_Paulo",
+  };
+  const formattedToday = today.toLocaleDateString("pt-BR", options);
+  const formattedLastWeek = lastWeek.toLocaleDateString("pt-BR", options);
   const dateRangeStr = `${formattedLastWeek} – ${formattedToday}`;
 
   return (
