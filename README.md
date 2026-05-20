@@ -1,36 +1,135 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# FriendsCharts 🎵🏆
 
-## Getting Started
+Construí um projeto chamado **FriendsCharts** onde um grupo de amigos pode visualizar coletivamente um ranking semanal de músicas, artistas e álbuns mais ouvidos entre eles. A aplicação consome a API pública do **Last.fm** para buscar os dados de escuta de cada usuário cadastrado, agrega tudo em um ranking unificado e exibe um painel visual elegante com os charts da semana — similar ao estilo do Spotify Wrapped, mas em tempo real e colaborativo.
 
-First, run the development server:
+Além da visualização, é possível **exportar o ranking como imagem** para compartilhar com os amigos.
+
+> ⚠️ **Importante:** Os nomes de usuário do Last.fm estão hardcodados no arquivo `src/constants/index.ts`. Quem for replicar o projeto deve substituí-los pelos usernames do Last.fm do seu próprio grupo de amigos.
+
+---
+
+## 🛠️ Tecnologias Utilizadas
+
+- **Frontend:** Next.js 16 (App Router), React 19, Tailwind CSS v4
+- **Componentes UI:** shadcn/ui, Radix UI
+- **Ícones:** Lucide React
+- **Requisições HTTP:** Axios
+- **Exportação de imagem:** html-to-image, html2canvas
+- **API de dados musicais:** Last.fm API
+- **Linguagem:** TypeScript
+
+---
+
+## ⚙️ Como configurar e rodar localmente
+
+Siga os passos abaixo para rodar a aplicação na sua máquina:
+
+**Clone o repositório:**
+
+```bash
+git clone https://github.com/seu-usuario/friendcharts.git
+cd friendcharts
+```
+
+**Instale as dependências:**
+
+```bash
+npm install
+```
+
+**Configure as variáveis de ambiente:** Crie um arquivo `.env` na raiz do projeto e adicione a sua chave de API do Last.fm:
+
+```env
+NEXT_PUBLIC_LASTFM_API_KEY=sua_chave_aqui
+```
+
+> Você pode obter uma chave gratuita em [https://www.last.fm/api/account/create](https://www.last.fm/api/account/create)
+
+**Configure os usuários do seu grupo:** Abra o arquivo `src/constants/index.ts` e substitua a lista `users` pelos usernames do Last.fm dos seus amigos:
+
+```ts
+export const users = ["username1", "username2", "username3", ...];
+```
+
+**Inicie o servidor de desenvolvimento:**
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+**Acesse no navegador:** Abra [http://localhost:3000](http://localhost:3000) para ver o site funcionando.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🎯 Como funciona
 
-## Learn More
+A lógica principal do FriendsCharts é simples e eficiente:
 
-To learn more about Next.js, take a look at the following resources:
+1. **Coleta de dados:** Para cada usuário cadastrado na lista, a aplicação faz uma chamada à API do Last.fm buscando as top músicas, artistas e álbuns da **última semana** (`period: 7day`).
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+2. **Agregação:** Os dados de todos os usuários são combinados. As contagens de plays de músicas, artistas e álbuns iguais são somadas, formando um ranking coletivo do grupo.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+3. **Destaques:** Para cada item do ranking, a aplicação identifica automaticamente quem foi o **top listener** — ou seja, o usuário do grupo que mais ouviu aquela música ou artista específico.
 
-## Deploy on Vercel
+4. **Ranking de ouvintes:** Um placar mostra os 3 usuários do grupo com mais plays na semana, criando uma competição saudável entre os amigos.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+5. **Exportação:** Um botão permite exportar o ranking visual como imagem PNG para ser compartilhado facilmente.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## 📂 Estrutura do Projeto
+
+```
+src/
+├── app/
+│   ├── api/
+│   │   ├── top-artists/    # Endpoint para ranking de artistas
+│   │   ├── top-tracks/     # Endpoint para ranking de músicas
+│   │   └── top-albums/     # Endpoint para ranking de álbuns
+│   ├── page.tsx            # Página principal com todos os rankings
+│   └── globals.css
+├── components/
+│   ├── ranking/            # Componentes de cada ranking (artistas, músicas, álbuns, top listener)
+│   ├── export-button.tsx   # Botão de exportação como imagem
+│   └── export-view.tsx     # Layout renderizado para exportação
+├── constants/
+│   └── index.ts            # ⭐ Lista de usuários e configurações globais
+├── lib/
+│   └── aggregators/        # Lógica de agregação dos dados por categoria
+├── services/               # Chamadas à API do Last.fm por categoria
+└── types/                  # Tipagens TypeScript
+```
+
+---
+
+## 🔑 Obtendo a chave de API do Last.fm
+
+1. Crie uma conta gratuita em [last.fm](https://www.last.fm)
+2. Acesse [https://www.last.fm/api/account/create](https://www.last.fm/api/account/create)
+3. Preencha o formulário e copie a **API Key** gerada
+4. Cole no seu arquivo `.env` como `NEXT_PUBLIC_LASTFM_API_KEY`
+
+---
+
+## 👥 Adicionando/removendo usuários do grupo
+
+O único arquivo que você precisa editar para personalizar o seu grupo é o [`src/constants/index.ts`](./src/constants/index.ts):
+
+```ts
+export const users = [
+  "seu_username_lastfm",
+  "username_do_amigo_1",
+  "username_do_amigo_2",
+  // adicione quantos quiser...
+];
+```
+
+> Todos os usuários precisam ter uma conta ativa no Last.fm com o **scrobbling habilitado** para que seus dados apareçam no ranking.
+
+---
+
+## 🚀 Deploy
+
+O projeto está pronto para ser publicado no **Vercel**. Basta conectar o repositório e configurar a variável de ambiente `NEXT_PUBLIC_LASTFM_API_KEY` nas configurações do projeto.
+
+O app detecta automaticamente a URL do Vercel via a variável `VERCEL_URL` para o correto funcionamento das chamadas de API internas.
