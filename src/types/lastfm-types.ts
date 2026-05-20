@@ -1,24 +1,27 @@
-type Track = {
+export type Track = {
   name: string;
   playcount: number;
   artist?: string;
   topListener?: string;
 };
 
-type Album = {
+export type Album = {
   name: string;
   playcount: number;
+  image?: string;
   artist?: string;
   topListener?: string;
   topListenerPlays?: number;
 };
 
-type User = {
+export type User = {
   user: string;
   playcount: number;
+  imageUrl?: string;
+  percentage?: number;
 };
 
-type Artist = {
+export type Artist = {
   name: string;
   playcount: number;
   topListener?: string;

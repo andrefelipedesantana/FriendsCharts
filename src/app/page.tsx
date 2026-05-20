@@ -6,8 +6,8 @@ import { TrackRanking } from "@/components/ranking/track-ranking";
 import { ArtistsRanking } from "@/components/ranking/artist-ranking";
 import { AlbumsRanking } from "@/components/ranking/album-ranking";
 import { ListenerRanking } from "@/components/ranking/top-listener-card";
-import { ExportButton } from "@/components/export-button";
-import { ExportView } from "@/components/export-view";
+import { ExportButtons } from "@/components/export/export-buttons";
+import { getUserInfo } from "@/services/user-info.service";
 
 export const dynamic = 'force-dynamic';
 
@@ -29,6 +29,24 @@ export default async function Home() {
   };
   const formattedToday = today.toLocaleDateString("pt-BR", options);
   const formattedLastWeek = lastWeek.toLocaleDateString("pt-BR", options);
+  const topListeners = tracksData.users.slice(0, 3);
+  const enrichedListeners = await Promise.all(
+    topListeners.map(async (listener) => {
+      let imageUrl = `https://api.dicebear.com/7.x/avataaars/svg?seed=${listener.user}`;
+      const userInfo = await getUserInfo(listener.user);
+      if (userInfo && userInfo.image) {
+        const extralargeImage = userInfo.image.find((img: any) => img.size === "extralarge")?.["#text"];
+        const largeImage = userInfo.image.find((img: any) => img.size === "large")?.["#text"];
+        const apiImage = extralargeImage || largeImage;
+        if (apiImage) {
+          imageUrl = apiImage;
+        }
+      }
+      const percentage = tracksData.totalPlays > 0 ? Math.round((listener.playcount / tracksData.totalPlays) * 100) : 0;
+      return { ...listener, imageUrl, percentage };
+    })
+  );
+
   const dateRangeStr = `${formattedLastWeek} – ${formattedToday}`;
 
   return (
@@ -46,7 +64,14 @@ export default async function Home() {
               </span>
             </div>
 
-            <ExportButton />
+            <ExportButtons 
+              artists={artistsData.artists} 
+              tracks={tracksData.tracks} 
+              albums={albumsData.albums}
+              listeners={enrichedListeners}
+              totalPlays={tracksData.totalPlays} 
+              dateRange={dateRangeStr} 
+            />
 
           </div>
 
@@ -72,14 +97,6 @@ export default async function Home() {
         </div>
       </div>
 
-      <div className="absolute inset-0 z-[-1] overflow-hidden pointer-events-none">
-        <ExportView
-          artists={artistsData.artists}
-          tracks={tracksData.tracks}
-          albums={albumsData.albums}
-          dateRange={dateRangeStr}
-        />
-      </div>
     </main>
   );
 }
