@@ -31,6 +31,7 @@ async function aggregateArtists() {
   }
 
   const sorted = Object.entries(rankingArtists)
+    .filter(([name]) => name !== "Música Para Estudar")
     .map(([name, data]) => ({
       name,
       playcount: data.playcount,

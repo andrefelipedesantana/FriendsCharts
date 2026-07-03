@@ -47,9 +47,9 @@ export function ExportOthersModal({ isOpen, onClose, tracks, albums, listeners, 
 
   const footer = (
     <div className="flex justify-end gap-4">
-      <button 
-        onClick={onClose} 
-        disabled={isExporting} 
+      <button
+        onClick={onClose}
+        disabled={isExporting}
         className="flex items-center gap-2 rounded-lg border border-white/20 bg-transparent px-4 py-2 text-sm font-medium text-white hover:bg-white/10 transition-colors disabled:opacity-50"
       >
         <XCircle className="h-4 w-4" /> Cancelar
@@ -71,7 +71,9 @@ export function ExportOthersModal({ isOpen, onClose, tracks, albums, listeners, 
           Esta é uma prévia da imagem que será exportada.
         </p>
 
+        {/* 1. RESPONSIVE PREVIEW (Visible inside Modal) */}
         <div className="w-full bg-[#0A0A0A] p-6 sm:p-8 rounded-3xl border border-white/10 text-white" style={{ fontFamily: "sans-serif" }}>
+          {/* Header */}
           <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-2xl bg-[#168853] p-6 shadow-xl">
             <div>
               <div className="mb-2 flex items-center gap-3">
@@ -86,6 +88,7 @@ export function ExportOthersModal({ isOpen, onClose, tracks, albums, listeners, 
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+            {/* Left Column: Top Tracks */}
             <div className="rounded-2xl bg-[#121212] p-6 shadow-xl">
               <h2 className="mb-6 text-2xl font-bold text-white">Top Músicas</h2>
               <div className="space-y-4">
@@ -110,6 +113,7 @@ export function ExportOthersModal({ isOpen, onClose, tracks, albums, listeners, 
               </div>
             </div>
 
+            {/* Right Column: Top Album & Top Listeners */}
             <div className="space-y-6">
               {topAlbum && (
                 <div className="rounded-2xl bg-[#121212] p-6 shadow-xl">
@@ -143,7 +147,7 @@ export function ExportOthersModal({ isOpen, onClose, tracks, albums, listeners, 
                   </div>
                 </div>
               )}
-              
+
               <div className="rounded-2xl bg-[#121212] p-6 shadow-xl">
                 <h2 className="mb-4 text-2xl font-bold text-white">Top Ouvintes</h2>
                 <div className="space-y-4">
@@ -199,12 +203,14 @@ export function ExportOthersModal({ isOpen, onClose, tracks, albums, listeners, 
           </div>
         </div>
 
+        {/* 2. HIDDEN HIGH-RES CONTAINER FOR EXPORT */}
         <div className="absolute pointer-events-none opacity-0" style={{ left: "-9999px", top: "-9999px" }}>
-          <div 
-            ref={exportRef} 
-            className="w-[800px] bg-[#0A0A0A] p-12 text-white" 
+          <div
+            ref={exportRef}
+            className="w-[800px] bg-[#0A0A0A] p-12 text-white"
             style={{ fontFamily: "sans-serif" }}
           >
+            {/* Header */}
             <div className="mb-10 flex items-center justify-between rounded-[32px] bg-[#168853] p-10 shadow-2xl">
               <div>
                 <div className="mb-4 flex items-center gap-4">
@@ -219,6 +225,7 @@ export function ExportOthersModal({ isOpen, onClose, tracks, albums, listeners, 
             </div>
 
             <div className="grid grid-cols-2 gap-8 items-start">
+              {/* Left Column: Top Tracks */}
               <div className="rounded-[32px] bg-[#121212] p-8 shadow-xl">
                 <h2 className="mb-8 text-3xl font-bold text-white">Top Tracks</h2>
                 <div className="space-y-6">
@@ -243,6 +250,7 @@ export function ExportOthersModal({ isOpen, onClose, tracks, albums, listeners, 
                 </div>
               </div>
 
+              {/* Right Column: Top Album & Top Listeners */}
               <div className="space-y-8">
                 {topAlbum && (
                   <div className="rounded-[32px] bg-[#121212] p-8 shadow-xl">
@@ -274,7 +282,7 @@ export function ExportOthersModal({ isOpen, onClose, tracks, albums, listeners, 
                     </div>
                   </div>
                 )}
-                
+
                 <div className="rounded-[32px] bg-[#121212] p-8 shadow-xl">
                   <h2 className="mb-6 text-3xl font-bold text-white">Top Ouvintes</h2>
                   <div className="space-y-6">
@@ -327,10 +335,10 @@ export function ExportOthersModal({ isOpen, onClose, tracks, albums, listeners, 
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-  </div>
-</Modal>
+    </Modal>
   );
 }
