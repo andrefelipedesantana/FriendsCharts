@@ -25,7 +25,10 @@ async function aggregateTracks() {
       }
 
       rankingTracks[trackKey].playcount += plays;
-      rankingUsers[user] = (rankingUsers[user] || 0) + plays;
+      
+      if (artist !== "Música Para Estudar") {
+        rankingUsers[user] = (rankingUsers[user] || 0) + plays;
+      }
 
       if (plays > (rankingTracks[trackKey].topListenerPlays || 0)) {
         rankingTracks[trackKey].topListener = user;

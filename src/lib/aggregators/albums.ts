@@ -43,6 +43,7 @@ async function aggregateAlbums() {
   }
 
   const sorted = Object.entries(ranking)
+    .filter(([name]) => !name.startsWith("Barulho"))
     .map(([name, data]) => ({
       name,
       playcount: data.playcount,
