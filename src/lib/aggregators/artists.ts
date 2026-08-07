@@ -1,5 +1,5 @@
 import { getTopArtists as fetchUserArtists } from "@/services/top-artists.service";
-import { users } from "@/constants";
+import { EXCLUDED_ARTISTS, users } from "@/constants";
 import { unstable_cache } from "next/cache";
 
 async function aggregateArtists() {
@@ -31,11 +31,12 @@ async function aggregateArtists() {
   }
 
   const sorted = Object.entries(rankingArtists)
-    .filter(([name]) => name !== "Música Para Estudar")
+    .filter(([name]) => !EXCLUDED_ARTISTS.includes(name))
     .map(([name, data]) => ({
       name,
       playcount: data.playcount,
       topListener: data.topListener,
+      topListenerPlays: data.topListenerPlays,
     }))
     .sort((a, b) => b.playcount - a.playcount);
 

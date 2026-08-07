@@ -26,7 +26,7 @@ async function aggregateAlbums() {
       const plays = Number(album.playcount) || 0;
       const artist = album.artist?.name;
       const image = album.image?.find(
-        (img: any) => img.size === "extralarge" || img.size === "large"
+        (img: { size?: string }) => img.size === "extralarge" || img.size === "large"
       )?.["#text"];
 
       if (!ranking[name]) {
@@ -50,6 +50,7 @@ async function aggregateAlbums() {
       image: data.image,
       artist: data.artist,
       topListener: data.topListener,
+      topListenerPlays: data.topListenerPlays,
     }))
     .sort((a, b) => b.playcount - a.playcount);
 
