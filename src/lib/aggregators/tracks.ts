@@ -6,6 +6,10 @@ async function aggregateTracks() {
   const rankingTracks: Record<string, { name: string; playcount: number; artist?: string; topListener?: string; topListenerPlays?: number }> = {};
   const rankingUsers: Record<string, number> = {};
 
+  for (const user of users) {
+    rankingUsers[user] = 0;
+  }
+
   const results = await Promise.all(
     users.map(async (user) => ({
       user,
