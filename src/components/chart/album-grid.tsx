@@ -9,7 +9,7 @@ type AlbumGridProps = {
 
 export function AlbumGrid({ albums }: AlbumGridProps) {
   return (
-    <section aria-labelledby="chart-albums">
+    <section aria-labelledby="chart-albums" className="flex flex-col">
       <SectionHeading
         id="chart-albums"
         title="Mais álbuns da semana"
@@ -19,7 +19,7 @@ export function AlbumGrid({ albums }: AlbumGridProps) {
       {albums.length === 0 ? (
         <EmptyNote>Sem outros álbuns nesta semana</EmptyNote>
       ) : (
-        <ol className="grid grid-cols-3 gap-2.5 @chart:grid-cols-6 @poster:gap-3">
+        <ol className="grid grid-cols-2 gap-2.5 @chart:grid-cols-4 @poster:gap-3">
           {albums.map((album) => (
             <li key={`${album.rank}-${album.name}`} className="min-w-0">
               <div className="relative aspect-square w-full overflow-hidden bg-sheet">
@@ -39,6 +39,11 @@ export function AlbumGrid({ albums }: AlbumGridProps) {
               <p className="truncate font-mono text-[9px] text-sage @poster:text-[10px]">
                 {album.artist || "Artista desconhecido"}
               </p>
+              {album.topListener ? (
+                <p className="truncate font-mono text-[9px] text-sage @poster:text-[10px]">
+                  maior ouvinte <span className="text-brass">{album.topListener}</span>
+                </p>
+              ) : null}
             </li>
           ))}
         </ol>

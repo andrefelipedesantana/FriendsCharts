@@ -8,6 +8,7 @@ import { ArtistRanking } from "./artist-ranking";
 import { ChartFooter } from "./chart-footer";
 import { ChartHeader } from "./chart-header";
 import { FeaturedAlbum } from "./featured-album";
+import { LeastListener } from "./least-listener";
 import { ListenerRanking } from "./listener-ranking";
 import { MainHighlight } from "./main-highlight";
 import { TrackRanking } from "./track-ranking";
@@ -29,7 +30,17 @@ type WeeklyChartProps = {
  * não existe uma segunda versão para exportar.
  */
 export function WeeklyChart({ edition, photo, onPhotoChange, className }: WeeklyChartProps) {
-  const { period, totals, headliner, artists, tracks, featuredAlbum, albums, listeners } = edition;
+  const {
+    period,
+    totals,
+    headliner,
+    artists,
+    tracks,
+    featuredAlbum,
+    albums,
+    listeners,
+    leastListener,
+  } = edition;
 
   return (
     <div className={cn("@container w-full bg-ink text-paper", className)}>
@@ -79,7 +90,10 @@ export function WeeklyChart({ edition, photo, onPhotoChange, className }: Weekly
               <ListenerRanking listeners={listeners} />
             </div>
 
-            <AlbumGrid albums={albums} />
+            <div className="grid gap-5 @poster:grid-cols-[0.64fr_0.36fr] @poster:gap-7">
+              <AlbumGrid albums={albums} />
+              <LeastListener listener={leastListener} />
+            </div>
           </>
         )}
 

@@ -47,7 +47,7 @@ async function aggregateTracks() {
 
   return {
     tracks: sortedTracks.slice(0, 10),
-    users: sortedUsers.slice(0, 3),
+    users: sortedUsers,
     totalPlays,
   };
 }

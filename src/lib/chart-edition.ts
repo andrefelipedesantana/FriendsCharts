@@ -18,7 +18,7 @@ const TIME_ZONE = "America/Sao_Paulo";
 export const ARTIST_RANKING_SIZE = 10;
 export const TRACK_RANKING_SIZE = 6;
 export const LISTENER_RANKING_SIZE = 3;
-export const ALBUM_GRID_SIZE = 6;
+export const ALBUM_GRID_SIZE = 4;
 
 export type ChartPeriod = {
   /** "30 JUL" */
@@ -110,6 +110,7 @@ export type ChartEdition = {
   featuredAlbum: RankedAlbum | null;
   albums: RankedAlbum[];
   listeners: RankedListener[];
+  leastListener: RankedListener | null;
   /** Falso quando a semana anterior não pôde ser recuperada. */
   hasHistory: boolean;
   /** Artistas que estavam no Top 10 da semana passada e saíram. */
@@ -223,21 +224,26 @@ function shareOf(playcount: number, leader: number) {
  * exportada consomem exatamente este objeto.
  */
 export async function getChartEdition(reference = new Date()): Promise<ChartEdition> {
-  const [tracksData, albumsData, artistsData, previousArtists] = await Promise.all([
+  const [tracksData, albumsData, artistsData] = await Promise.all([
     getAggregatedTracks(),
     getAggregatedAlbums(),
     getAggregatedArtists(),
-    // Histórico é complementar: se falhar, a edição sai sem variação.
-    getPreviousWeekArtists().catch(() => ({ artists: [], available: false })),
   ]);
 
   const rawArtists = artistsData.artists.slice(0, ARTIST_RANKING_SIZE);
+  const previousArtists = await getPreviousWeekArtists(rawArtists.map((a) => a.name)).catch(
+    () => ({ artists: [], available: false })
+  );
+
   const rawTracks = tracksData.tracks.slice(0, TRACK_RANKING_SIZE);
   const rawAlbums = albumsData.albums;
   const rawListeners = tracksData.users.slice(0, LISTENER_RANKING_SIZE);
+  const rawLeastListener =
+    tracksData.users.length > 0 ? tracksData.users[tracksData.users.length - 1] : null;
 
   const avatars = await resolveAvatars([
     ...rawListeners.map((listener) => listener.user),
+    rawLeastListener?.user,
     ...rawArtists.map((artist) => artist.topListener),
     ...rawAlbums.slice(0, 1).map((album) => album.topListener),
   ]);
@@ -300,6 +306,19 @@ export async function getChartEdition(reference = new Date()): Promise<ChartEdit
     avatar: avatars.get(listener.user),
   }));
 
+  const leastListener: RankedListener | null = rawLeastListener
+    ? {
+        rank: tracksData.users.length,
+        user: rawLeastListener.user,
+        playcount: rawLeastListener.playcount,
+        percentage:
+          tracksData.totalPlays > 0
+            ? Math.round((rawLeastListener.playcount / tracksData.totalPlays) * 100)
+            : 0,
+        avatar: avatars.get(rawLeastListener.user),
+      }
+    : null;
+
   const leader = artists[0];
   const runnerUp = artists[1];
 
@@ -347,6 +366,7 @@ export async function getChartEdition(reference = new Date()): Promise<ChartEdit
     featuredAlbum,
     albums,
     listeners,
+    leastListener,
     hasHistory: comparison.hasHistory,
     exitedArtists: comparison.exited,
     isEmpty: artists.length === 0 && tracks.length === 0 && allAlbums.length === 0,
