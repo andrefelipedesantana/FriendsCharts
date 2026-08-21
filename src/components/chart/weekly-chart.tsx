@@ -7,8 +7,6 @@ import { ArtistImageUploader } from "./artist-image-uploader";
 import { ArtistRanking } from "./artist-ranking";
 import { ChartFooter } from "./chart-footer";
 import { ChartHeader } from "./chart-header";
-import { FeaturedAlbum } from "./featured-album";
-import { LeastListener } from "./least-listener";
 import { ListenerRanking } from "./listener-ranking";
 import { MainHighlight } from "./main-highlight";
 import { TrackRanking } from "./track-ranking";
@@ -85,15 +83,9 @@ export function WeeklyChart({ edition, photo, onPhotoChange, className }: Weekly
               <TrackRanking tracks={tracks} />
             </div>
 
-            <div className="grid gap-5 @poster:grid-cols-[0.36fr_0.64fr] @poster:gap-7">
-              <FeaturedAlbum album={featuredAlbum} />
-              <ListenerRanking listeners={listeners} />
-            </div>
+            <AlbumGrid featured={featuredAlbum} albums={albums} />
 
-            <div className="grid gap-5 @poster:grid-cols-[0.64fr_0.36fr] @poster:gap-7">
-              <AlbumGrid albums={albums} />
-              <LeastListener listener={leastListener} />
-            </div>
+            <ListenerRanking listeners={listeners} leastListener={leastListener} />
           </>
         )}
 
