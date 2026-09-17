@@ -231,7 +231,7 @@ export async function getChartEdition(reference = new Date()): Promise<ChartEdit
   ]);
 
   const rawArtists = artistsData.artists.slice(0, ARTIST_RANKING_SIZE);
-  const previousArtists = await getPreviousWeekArtists(rawArtists.map((a) => a.name)).catch(
+  const previousArtists = await getPreviousWeekArtists().catch(
     () => ({ artists: [], available: false })
   );
 

@@ -111,6 +111,18 @@ function ExportChartDialog({
 
       downloadDataUrl(dataUrl, chartFileName(edition.period.isoEnd));
       setStatus({ kind: "done" });
+
+      // Atualiza o ranking da semana anterior automaticamente se for quinta-feira
+      try {
+        const top10 = edition.artists.slice(0, 10).map((a) => a.name);
+        await fetch("/api/update-previous-top10", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ top10 }),
+        });
+      } catch (updateErr) {
+        console.warn("Aviso ao tentar atualizar o ranking anterior automaticamente:", updateErr);
+      }
     } catch (error) {
       console.error("Falha ao exportar o chart", error);
       setStatus({
@@ -118,7 +130,7 @@ function ExportChartDialog({
         message: "Não foi possível gerar a imagem. Tente de novo em alguns segundos.",
       });
     }
-  }, [edition.period.isoEnd]);
+  }, [edition.artists, edition.period.isoEnd]);
 
   const isBusy = status.kind === "loading";
   const canExport = imagesReady && !isBusy;

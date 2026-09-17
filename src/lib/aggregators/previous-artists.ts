@@ -1,4 +1,4 @@
-import { getPreviousTop10, INITIAL_BASELINE_TOP_10 } from "@/lib/ranking-history";
+import { PREVIOUS_TOP_10 } from "@/constants";
 
 export type PreviousArtistsResult = {
   artists: Array<{ name: string; playcount: number }>;
@@ -8,27 +8,16 @@ export type PreviousArtistsResult = {
 
 /**
  * Retorna o ranking da semana anterior para cálculo de movimentação (subiu, desceu, novo).
- * O histórico é gerenciado por ciclos semanais com virada toda Sexta-feira às 10h (Horário de Brasília).
+ * Consome diretamente o array PREVIOUS_TOP_10 configurado em src/constants/index.ts.
  */
-export async function getPreviousWeekArtists(currentTop10?: string[]): Promise<PreviousArtistsResult> {
-  try {
-    const top10 = await getPreviousTop10(currentTop10);
-    return {
-      artists: top10.map((name, index) => ({
-        name,
-        playcount: 10 - index,
-      })),
-      available: top10.length > 0,
-    };
-  } catch (error) {
-    console.error("Erro ao carregar ranking da semana anterior:", error);
-    return {
-      artists: INITIAL_BASELINE_TOP_10.map((name, index) => ({
-        name,
-        playcount: 10 - index,
-      })),
-      available: true,
-    };
-  }
-}
+export async function getPreviousWeekArtists(): Promise<PreviousArtistsResult> {
+  const top10 = PREVIOUS_TOP_10 ?? [];
 
+  return {
+    artists: top10.map((name, index) => ({
+      name,
+      playcount: 10 - index,
+    })),
+    available: top10.length > 0,
+  };
+}
