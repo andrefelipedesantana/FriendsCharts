@@ -31,6 +31,8 @@ export type ChartPeriod = {
   isoEnd: string;
   /** Semana ISO do ano: vira o número da edição. */
   editionNumber: number;
+  /** "2026-W46" — chave da edição no histórico de rankings. */
+  editionKey: string;
 };
 
 export type ChartTotals = {
@@ -113,6 +115,13 @@ export type ChartEdition = {
   leastListener: RankedListener | null;
   /** Falso quando a semana anterior não pôde ser recuperada. */
   hasHistory: boolean;
+  /** Edição usada como base da comparação ("2026-W45"), se houver. */
+  previousEditionKey?: string;
+  /**
+   * Verdadeiro quando a base não é a edição imediatamente anterior (snapshot
+   * da semana passada não foi salvo). Só aparece na interface, nunca na imagem.
+   */
+  previousEditionStale: boolean;
   /** Artistas que estavam no Top 10 da semana passada e saíram. */
   exitedArtists: string[];
   /** Verdadeiro quando não há nenhum play na semana. */
@@ -140,7 +149,7 @@ const getAvatar = unstable_cache(fetchAvatar, ["listener-avatar"], {
 });
 
 /** Uma chamada por usuário distinto, reaproveitada por todas as seções. */
-async function resolveAvatars(usernames: Array<string | undefined>) {
+export async function resolveAvatars(usernames: Array<string | undefined>) {
   const unique = Array.from(new Set(usernames.filter((name): name is string => Boolean(name))));
 
   const entries = await Promise.all(
@@ -185,14 +194,24 @@ function shortLabel(date: Date) {
   return `${day} ${month}`.toUpperCase();
 }
 
-/** Semana ISO-8601 do ano — o número da edição vem daqui. */
+/** Semana ISO-8601 (e o ano ISO dela) — o número da edição vem daqui. */
 function isoWeek({ day, month, year }: { day: number; month: number; year: number }) {
   const date = new Date(Date.UTC(year, month - 1, day));
   const weekday = date.getUTCDay() || 7;
   date.setUTCDate(date.getUTCDate() + 4 - weekday);
-  const yearStart = new Date(Date.UTC(date.getUTCFullYear(), 0, 1));
+  const weekYear = date.getUTCFullYear();
+  const yearStart = new Date(Date.UTC(weekYear, 0, 1));
 
-  return Math.ceil(((date.getTime() - yearStart.getTime()) / 86_400_000 + 1) / 7);
+  return {
+    week: Math.ceil(((date.getTime() - yearStart.getTime()) / 86_400_000 + 1) / 7),
+    weekYear,
+  };
+}
+
+/** "2026-W46": ordenável como string, estável entre anos. */
+export function editionKeyFor(reference = new Date()) {
+  const { week, weekYear } = isoWeek(partsOf(reference));
+  return `${weekYear}-W${String(week).padStart(2, "0")}`;
 }
 
 export function buildPeriod(reference = new Date()): ChartPeriod {
@@ -209,7 +228,8 @@ export function buildPeriod(reference = new Date()): ChartPeriod {
     endLabel,
     label: `${startLabel} — ${endLabel}`,
     isoEnd: `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`,
-    editionNumber: isoWeek({ day, month, year }),
+    editionNumber: isoWeek({ day, month, year }).week,
+    editionKey: editionKeyFor(end),
   };
 }
 
@@ -230,10 +250,16 @@ export async function getChartEdition(reference = new Date()): Promise<ChartEdit
     getAggregatedArtists(),
   ]);
 
+  const period = buildPeriod(reference);
   const rawArtists = artistsData.artists.slice(0, ARTIST_RANKING_SIZE);
-  const previousArtists = await getPreviousWeekArtists().catch(
-    () => ({ artists: [], available: false })
+  const previousArtists = await getPreviousWeekArtists(period.editionKey).catch(
+    () => ({ artists: [], available: false, editionKey: undefined })
   );
+
+  const lastWeek = new Date(reference);
+  lastWeek.setDate(reference.getDate() - 7);
+  const previousEditionStale =
+    previousArtists.available && previousArtists.editionKey !== editionKeyFor(lastWeek);
 
   const rawTracks = tracksData.tracks.slice(0, TRACK_RANKING_SIZE);
   const rawAlbums = albumsData.albums;
@@ -354,7 +380,7 @@ export async function getChartEdition(reference = new Date()): Promise<ChartEdit
     : null;
 
   return {
-    period: buildPeriod(reference),
+    period,
     totals: {
       plays: tracksData.totalPlays,
       participants: participants.length,
@@ -368,6 +394,8 @@ export async function getChartEdition(reference = new Date()): Promise<ChartEdit
     listeners,
     leastListener,
     hasHistory: comparison.hasHistory,
+    previousEditionKey: previousArtists.editionKey,
+    previousEditionStale,
     exitedArtists: comparison.exited,
     isEmpty: artists.length === 0 && tracks.length === 0 && allAlbums.length === 0,
   };

@@ -1,137 +1,28 @@
 {
-  "activeCycle": "edition-37",
-  "history": {
-    "edition-34": [
+  "editions": {
+    "2026-W44": [
+      "Caetano Veloso",
+      "Angela Maria",
       "Ariana Grande",
-      "Maria Bethânia",
-      "Charli xcx",
-      "Tyla",
-      "Anitta",
-      "Madonna",
-      "Lady Gaga",
-      "Taylor Swift",
-      "Slayyyter",
-      "Djavan"
+      "Luísa Sonza",
+      "Tinashe",
+      "Gal Costa",
+      "Tate McRae",
+      "Potyguara Bardo",
+      "Rachel Ries",
+      "Angèle"
     ],
-    "cycle-2026-08-07": [
-      "Ariana Grande",
-      "Maria Bethânia",
-      "Charli xcx",
-      "Tyla",
-      "Anitta",
-      "Madonna",
+    "2026-W45": [
       "Lady Gaga",
-      "Taylor Swift",
-      "Slayyyter",
-      "Djavan"
-    ],
-    "edition-35": [
-      "Ariana Grande",
-      "Charli xcx",
+      "Nara Leão",
+      "Ashe",
       "FLO",
-      "Lady Gaga",
-      "Madonna",
-      "Anitta",
-      "Tyla",
-      "Taylor Swift",
-      "Urias",
-      "Gaby Amarantos"
-    ],
-    "cycle-2026-08-14": [
+      "Claudia Leitte",
       "Ariana Grande",
-      "Charli xcx",
-      "FLO",
-      "Lady Gaga",
-      "Madonna",
-      "Anitta",
-      "Tyla",
-      "Taylor Swift",
-      "Urias",
-      "Gaby Amarantos"
-    ],
-    "edition-36": [
-      "Beyoncé",
-      "Marisa Monte",
-      "Faouzia",
-      "Anitta",
-      "Erykah Badu",
-      "Miley Cyrus",
-      "Ariana Grande",
-      "Madonna",
-      "Daniela Mercury",
-      "Lady Gaga"
-    ],
-    "cycle-2026-08-28": [
-      "Beyoncé",
-      "Marisa Monte",
-      "Faouzia",
-      "Anitta",
-      "Erykah Badu",
-      "Miley Cyrus",
-      "Ariana Grande",
-      "Madonna",
-      "Daniela Mercury",
-      "Lady Gaga"
-    ],
-    "cycle-2026-09-03": [
-      "Beyoncé",
-      "Marisa Monte",
-      "Faouzia",
-      "Anitta",
-      "Erykah Badu",
-      "Miley Cyrus",
-      "Ariana Grande",
-      "Madonna",
-      "Daniela Mercury",
-      "Lady Gaga"
-    ],
-    "edition-37": [
-      "Lana Del Rey",
-      "Beyoncé",
-      "ADÉLA",
-      "Ariana Grande",
-      "Daniela Mercury",
-      "Rebecca Black",
-      "Miley Cyrus",
-      "Kyra Machida",
-      "Margareth Menezes",
-      "Vita"
-    ],
-    "cycle-2026-09-04": [
-      "Lana Del Rey",
-      "Beyoncé",
-      "ADÉLA",
-      "Ariana Grande",
-      "Daniela Mercury",
-      "Rebecca Black",
-      "Miley Cyrus",
-      "Kyra Machida",
-      "Margareth Menezes",
-      "Vita"
-    ],
-    "cycle-2026-09-10": [
-      "Lana Del Rey",
-      "Beyoncé",
-      "ADÉLA",
-      "Ariana Grande",
-      "Daniela Mercury",
-      "Rebecca Black",
-      "Miley Cyrus",
-      "Kyra Machida",
-      "Margareth Menezes",
-      "Vita"
-    ],
-    "cycle-2026-09-11": [
-      "Lana Del Rey",
-      "Beyoncé",
-      "ADÉLA",
-      "Ariana Grande",
-      "Daniela Mercury",
-      "Rebecca Black",
-      "Miley Cyrus",
-      "Kyra Machida",
-      "Margareth Menezes",
-      "Vita"
+      "Angèle",
+      "Gaby Amarantos",
+      "Angela Maria",
+      "Tate McRae"
     ]
   }
 }

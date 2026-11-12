@@ -21,6 +21,12 @@ type ExportStatus =
   | { kind: "done" }
   | { kind: "error"; message: string };
 
+type SnapshotStatus =
+  | { kind: "idle" }
+  | { kind: "saved"; editionKey: string }
+  | { kind: "skipped"; message: string }
+  | { kind: "failed"; message: string };
+
 export function ExportChartButton({ edition, photo, onPhotoChange }: ExportChartButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -61,6 +67,7 @@ function ExportChartDialog({
   const [posterHeight, setPosterHeight] = useState(0);
   const [imagesReady, setImagesReady] = useState(false);
   const [status, setStatus] = useState<ExportStatus>({ kind: "idle" });
+  const [snapshot, setSnapshot] = useState<SnapshotStatus>({ kind: "idle" });
 
   // A prévia é o próprio nó exportado, apenas reduzido para caber no modal.
   useLayoutEffect(() => {
@@ -112,16 +119,29 @@ function ExportChartDialog({
       downloadDataUrl(dataUrl, chartFileName(edition.period.isoEnd));
       setStatus({ kind: "done" });
 
-      // Atualiza o ranking da semana anterior automaticamente se for quinta-feira
+      // Salva o Top 10 desta imagem como base da próxima edição (só às quintas).
       try {
         const top10 = edition.artists.slice(0, 10).map((a) => a.name);
-        await fetch("/api/update-previous-top10", {
+        const res = await fetch("/api/update-previous-top10", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ top10 }),
         });
+        const data = await res.json().catch(() => ({}));
+
+        if (data.saved) {
+          setSnapshot({ kind: "saved", editionKey: data.editionKey });
+        } else if (data.skipped) {
+          setSnapshot({ kind: "skipped", message: data.message });
+        } else {
+          setSnapshot({
+            kind: "failed",
+            message: data.message ?? data.error ?? "Não foi possível salvar o ranking da semana.",
+          });
+        }
       } catch (updateErr) {
-        console.warn("Aviso ao tentar atualizar o ranking anterior automaticamente:", updateErr);
+        console.warn("Falha ao salvar o ranking da semana:", updateErr);
+        setSnapshot({ kind: "failed", message: "Não foi possível salvar o ranking da semana." });
       }
     } catch (error) {
       console.error("Falha ao exportar o chart", error);
@@ -186,6 +206,24 @@ function ExportChartDialog({
       footer={footer}
     >
       <div className="flex flex-col gap-4">
+        {!edition.hasHistory || edition.previousEditionStale ? (
+          <p className="border border-amber-300/40 bg-amber-300/10 p-3 font-mono text-[10px] uppercase leading-relaxed tracking-[0.14em] text-amber-200">
+            {edition.hasHistory
+              ? `Atenção: o ranking da semana passada não foi salvo. As setas comparam com a edição ${edition.previousEditionKey}.`
+              : "Atenção: não há ranking anterior salvo. A comparação com a semana passada não vai aparecer."}
+          </p>
+        ) : null}
+
+        {snapshot.kind === "saved" ? (
+          <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-signal">
+            Top 10 salvo como base da próxima edição ({snapshot.editionKey}).
+          </p>
+        ) : snapshot.kind === "failed" ? (
+          <p className="border border-red-300/40 bg-red-300/10 p-3 font-mono text-[10px] uppercase leading-relaxed tracking-[0.14em] text-red-200">
+            {snapshot.message} A comparação da próxima semana vai ficar errada.
+          </p>
+        ) : null}
+
         {edition.headliner ? (
           <div className="flex flex-col gap-2 border border-paper/12 bg-sheet/50 p-3 sm:flex-row sm:items-center sm:justify-between">
             <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-sage">

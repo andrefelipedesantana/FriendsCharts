@@ -14,24 +14,6 @@ export const users = [
   "piscixxx",
 ];
 
-/**
- * Top 10 da última semana fechada (extraído na quinta-feira).
- * Serve como base comparativa para calcular quem subiu (▲), desceu (▼), saiu do ranking ou é novo.
- * Toda quinta-feira à noite, ao exportar o novo chart, substitua este array pelo ranking da semana.
- */
-export const PREVIOUS_TOP_10 = [
-  "Lana Del Rey",
-  "Beyoncé",
-  "ADÉLA",
-  "Ariana Grande",
-  "Daniela Mercury",
-  "Rebecca Black",
-  "Miley Cyrus",
-  "Kyra Machida",
-  "Margareth Menezes",
-  "Vita",
-];
-
 /** Fora do ranking de artistas: playlists de ruído branco distorcem o chart. */
 export const EXCLUDED_ARTISTS = ["Música Para Estudar"];
 
